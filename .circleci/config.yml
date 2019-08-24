@@ -6,7 +6,6 @@
        - image: circleci/node:10.16
      steps:
        - checkout
-       - run: echo "echo pwd"
        - run: pwd
        - run: ls -l /home/circleci
        - run: ls -l /home/circleci/work/package.json
