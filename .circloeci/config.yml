@@ -1,0 +1,64 @@
+ version: 2
+ jobs:
+   build:
+     working_directory: ~/work
+     docker:
+       - image: circleci/node:10.16
+     steps:
+       - checkout
+       - run: echo "echo pwd"
+       - run: pwd
+       - run: ls -l /home/circleci
+       - run: ls -l /home/circleci/work
+       - run: ls -l /home/circleci/work/react_ci
+       - run: ls -l /home/circleci/work/react_ci/package.json
+       - run: pwd
+       - run: cd react_ci
+       - run: pwd
+
+       - run:
+          name: Update npm
+          command: 'sudo npm install -g npm@latest'
+       - restore_cache: # special step to restore the dependency cache
+          # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+          key: dependency-cache-{{ checksum "./react_ci/package.json" }}
+       - run:
+          name: Install npm wee
+          command: npm install
+       - save_cache: # special step to save the dependency cache
+          key: dependency-cache-{{ checksum "./react_ci/package.json" }}
+          paths:
+             - ./node_modules
+   test:
+     working_directory: ~/work
+     docker:
+       - image: circleci/node:10.16
+     steps:
+       - checkout
+       - run: pwd
+       - run: ls -l
+       - run: cd react_ci
+       - run: pwd
+       - run:
+          name: Test
+          command: 'npm test'
+       - run: # run coverage report
+          name: code-coverage
+          command: './node_modules/.bin/nyc report --reporter=text-lcov'
+       - store_artifacts: # special step to save test results as as artifact
+          # Upload test summary for display in Artifacts: https://circleci.com/docs/2.0/artifacts/ 
+          path: test-results.xml
+          prefix: tests
+       - store_artifacts: # for display in Artifacts: https://circleci.com/docs/2.0/artifacts/ 
+          path: coverage
+          prefix: coverage
+       - store_test_results: # for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
+          path: test-results.xml
+ workflows:
+   version: 2
+   build_and_test:
+     jobs:
+       - build
+       - test:
+          requires:
+            - build
