@@ -10,8 +10,7 @@
        - run: pwd
        - run: ls -l /home/circleci
        - run: ls -l /home/circleci/work
-       - run: ls -l /home/circleci/work/react_ci
-       - run: ls -l /home/circleci/work/react_ci/package.json
+       - run: ls -l /home/circleci/work/package.json
        - run: pwd
        - run: cd react_ci
        - run: pwd
@@ -21,12 +20,12 @@
           command: 'sudo npm install -g npm@latest'
        - restore_cache: # special step to restore the dependency cache
           # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
-          key: dependency-cache-{{ checksum "./react_ci/package.json" }}
+          key: dependency-cache-{{ checksum "package.json" }}
        - run:
           name: Install npm wee
           command: npm install
        - save_cache: # special step to save the dependency cache
-          key: dependency-cache-{{ checksum "./react_ci/package.json" }}
+          key: dependency-cache-{{ checksum "package.json" }}
           paths:
              - ./node_modules
    test:
@@ -37,8 +36,7 @@
        - checkout
        - run: pwd
        - run: ls -l
-       - run: cd react_ci
-       - run: pwd
+
        - run:
           name: Test
           command: 'npm test'
