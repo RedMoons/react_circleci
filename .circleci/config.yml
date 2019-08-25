@@ -7,7 +7,6 @@
      steps:
        - checkout
        - run: pwd
-       - run: ls -l /home/circleci
        - run: ls -l /home/circleci/work/package.json
        - run: pwd
 
